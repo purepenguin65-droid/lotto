@@ -432,6 +432,60 @@ body {
 .neck-ball.green,
 .dispenser-ball.green  { background: #22c55e; }
 
+.birthday-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-lg);
+  max-width: 320px;
+}
+
+.birthday-label {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--color-ink);
+}
+
+.text-input {
+  width: 100%;
+  height: 48px;
+  padding: 14px 16px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-none);
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-family);
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.text-input:focus {
+  outline: none;
+  border: 2px solid var(--color-ink);
+  padding: 13px 15px;
+}
+
+.text-input:disabled {
+  background: var(--color-surface-soft);
+  color: var(--color-muted);
+}
+
+.birthday-hint {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--color-muted);
+}
+
+.birthday-hint--error {
+  color: #dc2626;
+}
+
+.birthday-hint--ok {
+  color: var(--color-primary);
+}
+
 .controls {
   display: flex;
   gap: var(--spacing-sm);
@@ -587,6 +641,21 @@ body {
 .history-ball-bonus {
   outline: 2px solid var(--color-primary);
   outline-offset: 1px;
+}
+
+.history-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.history-birth {
+  color: var(--color-ink);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
 .history-time {

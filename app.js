@@ -9,6 +9,8 @@ const BETWEEN_DRAW = 250;
 
 const drawBtn = document.getElementById("drawBtn");
 const resetBtn = document.getElementById("resetBtn");
+const birthDateInput = document.getElementById("birthDate");
+const birthdayHint = document.getElementById("birthdayHint");
 const historyList = document.getElementById("historyList");
 const clearHistoryBtn = document.getElementById("clearHistoryBtn");
 const bonusBall = document.getElementById("bonusBall");
@@ -203,6 +205,52 @@ function formatTime(date) {
   });
 }
 
+function getTodayString() {
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth() + 1).padStart(2, "0");
+  const d = String(today.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function formatBirthDate(dateStr) {
+  const [y, m, d] = dateStr.split("-");
+  return `${y}. ${m}. ${d}.`;
+}
+
+function validateBirthDate() {
+  const value = birthDateInput.value;
+
+  if (!value) {
+    return { valid: false, message: "추첨 전 생년월일을 입력해 주세요." };
+  }
+
+  const birth = new Date(value);
+  const today = new Date(getTodayString());
+
+  if (Number.isNaN(birth.getTime())) {
+    return { valid: false, message: "올바른 생년월일을 입력해 주세요." };
+  }
+
+  if (birth > today) {
+    return { valid: false, message: "미래 날짜는 입력할 수 없습니다." };
+  }
+
+  if (birth.getFullYear() < 1900) {
+    return { valid: false, message: "1900년 이후 생년월일만 입력할 수 있습니다." };
+  }
+
+  return { valid: true, message: "생년월일이 확인되었습니다. 추첨을 시작할 수 있습니다." };
+}
+
+function updateDrawButtonState() {
+  const { valid, message } = validateBirthDate();
+  birthdayHint.textContent = message;
+  birthdayHint.classList.toggle("birthday-hint--error", !valid && birthDateInput.value !== "");
+  birthdayHint.classList.toggle("birthday-hint--ok", valid);
+  drawBtn.disabled = !valid || isDrawing;
+}
+
 function renderHistory() {
   if (history.length === 0) {
     historyList.innerHTML = '<li class="history-empty">아직 추첨 기록이 없습니다</li>';
@@ -226,7 +274,10 @@ function renderHistory() {
           <span class="history-plus">+</span>
           <span class="history-ball history-ball-bonus ${getBallColor(entry.bonus)}">${entry.bonus}</span>
         </div>
-        <span class="history-time">${entry.time}</span>
+        <div class="history-meta">
+          ${entry.birthDate ? `<span class="history-birth">${formatBirthDate(entry.birthDate)}</span>` : ""}
+          <span class="history-time">${entry.time}</span>
+        </div>
       </li>`
     )
     .join("");
@@ -234,9 +285,19 @@ function renderHistory() {
 
 async function drawNumbers() {
   if (isDrawing) return;
+
+  const birthCheck = validateBirthDate();
+  if (!birthCheck.valid) {
+    birthdayHint.textContent = birthCheck.message;
+    birthdayHint.classList.add("birthday-hint--error");
+    return;
+  }
+
+  const birthDate = birthDateInput.value;
   isDrawing = true;
   drawBtn.disabled = true;
   resetBtn.disabled = true;
+  birthDateInput.disabled = true;
 
   resetBalls();
   const { drawOrder, main, bonus } = generateNumbers();
@@ -253,14 +314,24 @@ async function drawNumbers() {
   await drawOneNumber(bonus, bonusBall, "보너스 구슬을 뽑는 중...");
   setMachineStatus("추첨이 완료되었습니다!");
 
-  history.unshift({ numbers: main, bonus, time: formatTime(new Date()) });
+  history.unshift({
+    numbers: main,
+    bonus,
+    birthDate,
+    time: formatTime(new Date()),
+  });
   if (history.length > 20) history.pop();
   renderHistory();
 
   isDrawing = false;
-  drawBtn.disabled = false;
+  birthDateInput.disabled = false;
   resetBtn.disabled = false;
+  updateDrawButtonState();
 }
+
+birthDateInput.max = getTodayString();
+birthDateInput.addEventListener("input", updateDrawButtonState);
+birthDateInput.addEventListener("change", updateDrawButtonState);
 
 drawBtn.addEventListener("click", drawNumbers);
 

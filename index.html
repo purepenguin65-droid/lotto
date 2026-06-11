@@ -70,8 +70,14 @@
 
       <div class="flying-ball" id="flyingBall" hidden></div>
 
+      <div class="birthday-form">
+        <label class="birthday-label" for="birthDate">생년월일</label>
+        <input class="text-input" type="date" id="birthDate" aria-describedby="birthdayHint" required>
+        <p class="birthday-hint" id="birthdayHint">추첨 전 생년월일을 입력해 주세요.</p>
+      </div>
+
       <div class="controls">
-        <button class="btn btn-primary" id="drawBtn" type="button">번호 추첨하기</button>
+        <button class="btn btn-primary" id="drawBtn" type="button" disabled>번호 추첨하기</button>
         <button class="btn btn-secondary" id="resetBtn" type="button" disabled>초기화</button>
       </div>
     </section>
