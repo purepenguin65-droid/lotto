@@ -52,8 +52,6 @@ function appendAssistantMessage(data) {
     role: "assistant",
     text: `${data.message}\n추천번호: ${data.numbers.join(", ")} + ${data.bonus}`,
   });
-
-  setTimeout(() => window.showSignupModal?.(), 600);
 }
 
 function appendErrorMessage(text) {
@@ -99,13 +97,17 @@ function getTodayForChat() {
   return `${y}-${m}-${d}`;
 }
 
-async function requestChat(message) {
+function startChatRequest(message) {
   const birthCheck = getBirthDateForChat();
   if (!birthCheck.ok) {
     appendErrorMessage(birthCheck.message);
     return;
   }
 
+  window.requireSignup?.(() => requestChat(message));
+}
+
+async function requestChat(message) {
   if (message) {
     appendUserMessage(message);
   } else {
@@ -154,13 +156,13 @@ async function requestChat(message) {
   }
 }
 
-chatRecommendBtn.addEventListener("click", () => requestChat(""));
+chatRecommendBtn.addEventListener("click", () => startChatRequest(""));
 
 chatSendBtn.addEventListener("click", () => {
   const text = chatInput.value.trim();
   if (!text || isChatLoading) return;
   chatInput.value = "";
-  requestChat(text);
+  startChatRequest(text);
 });
 
 chatInput.addEventListener("keydown", (e) => {

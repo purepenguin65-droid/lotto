@@ -7,13 +7,14 @@ const signupLaterBtn = document.getElementById("signupLaterBtn");
 const signupBackdrop = document.getElementById("signupBackdrop");
 const signupSubmitBtn = document.getElementById("signupSubmitBtn");
 
+let pendingAction = null;
+
 function isSignedUp() {
   return localStorage.getItem(SIGNUP_KEY) === "true";
 }
 
 function openSignupModal() {
   if (!signupModal) return;
-  if (isSignedUp()) return;
 
   signupModal.classList.add("is-open");
   document.body.classList.add("modal-open");
@@ -24,6 +25,17 @@ function closeSignupModal() {
   if (!signupModal) return;
   signupModal.classList.remove("is-open");
   document.body.classList.remove("modal-open");
+  pendingAction = null;
+}
+
+function requireSignup(action) {
+  if (isSignedUp()) {
+    action();
+    return;
+  }
+
+  pendingAction = action;
+  openSignupModal();
 }
 
 function validatePhone(phone) {
@@ -39,7 +51,7 @@ function showSignupSuccess(name) {
   closeSignupModal();
   const toast = document.getElementById("signupToast");
   if (!toast) return;
-  toast.textContent = `${name}님, 가입이 완료되었습니다! 앞으로 AI 맞춤 번호를 추천해 드릴게요.`;
+  toast.textContent = `${name}님, 가입이 완료되었습니다! 이제 AI 번호 추천을 받아보세요.`;
   toast.hidden = false;
   setTimeout(() => {
     toast.hidden = true;
@@ -95,7 +107,14 @@ signupForm?.addEventListener("submit", async (e) => {
       "lotto_signup_info",
       JSON.stringify({ name, phone, email, joinedAt: new Date().toISOString() })
     );
+
+    const nextAction = pendingAction;
+    pendingAction = null;
     showSignupSuccess(name);
+
+    if (nextAction) {
+      setTimeout(nextAction, 300);
+    }
   } catch {
     errorEl.textContent = "네트워크 오류가 발생했습니다. Vercel 배포 환경에서 다시 시도해 주세요.";
   } finally {
@@ -114,3 +133,5 @@ document.addEventListener("keydown", (e) => {
 });
 
 window.showSignupModal = openSignupModal;
+window.requireSignup = requireSignup;
+window.isUserSignedUp = isSignedUp;
