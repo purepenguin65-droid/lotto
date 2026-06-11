@@ -119,8 +119,14 @@ async function requestChat(message) {
 
   const loadingEl = chatMessages.lastElementChild;
 
+  if (window.location.protocol === "file:") {
+    appendErrorMessage("로컬 파일로 열면 AI API를 사용할 수 없습니다. Vercel 배포 주소로 접속해 주세요.");
+    chatHistory.pop();
+    return;
+  }
+
   try {
-    const res = await fetch("/api/chat", {
+    const res = await fetch(`${window.location.origin}/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -149,8 +155,10 @@ async function requestChat(message) {
     }
   } catch {
     loadingEl.remove();
-    appendErrorMessage("네트워크 오류가 발생했습니다. Vercel 배포 환경에서 다시 시도해 주세요.");
-    if (message) chatHistory.pop();
+    appendErrorMessage(
+      `서버에 연결할 수 없습니다. Vercel 배포 주소에서 접속했는지 확인해 주세요. (${window.location.origin}/api/health)`
+    );
+    chatHistory.pop();
   } finally {
     setChatLoading(false);
   }
