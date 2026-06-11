@@ -104,7 +104,12 @@ function startChatRequest(message) {
     return;
   }
 
-  window.requireSignup?.(() => requestChat(message, birthCheck.birthDate));
+  if (typeof window.requireSignup !== "function") {
+    appendErrorMessage("가입 화면을 불러오지 못했습니다. 페이지를 새로고침(Ctrl+Shift+R)해 주세요.");
+    return;
+  }
+
+  window.requireSignup(() => requestChat(message, birthCheck.birthDate));
 }
 
 async function requestChat(message, birthDate) {
@@ -166,18 +171,26 @@ async function requestChat(message, birthDate) {
   }
 }
 
-chatRecommendBtn.addEventListener("click", () => startChatRequest(""));
+function initChat() {
+  chatRecommendBtn?.addEventListener("click", () => startChatRequest(""));
 
-chatSendBtn.addEventListener("click", () => {
-  const text = chatInput.value.trim();
-  if (!text || isChatLoading) return;
-  chatInput.value = "";
-  startChatRequest(text);
-});
+  chatSendBtn?.addEventListener("click", () => {
+    const text = chatInput.value.trim();
+    if (!text || isChatLoading) return;
+    chatInput.value = "";
+    startChatRequest(text);
+  });
 
-chatInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    chatSendBtn.click();
-  }
-});
+  chatInput?.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      chatSendBtn.click();
+    }
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", initChat);
+} else {
+  initChat();
+}

@@ -18,15 +18,35 @@ function apiUrl(path) {
   return `${window.location.origin}${path}`;
 }
 
+function getSavedSignupInfo() {
+  try {
+    return JSON.parse(localStorage.getItem("lotto_signup_info") || "null");
+  } catch {
+    return null;
+  }
+}
+
 function isSignedUp() {
-  return localStorage.getItem(SIGNUP_KEY) === "true";
+  if (localStorage.getItem(SIGNUP_KEY) !== "true") return false;
+
+  const info = getSavedSignupInfo();
+  if (info?.name && info?.email) return true;
+
+  localStorage.removeItem(SIGNUP_KEY);
+  localStorage.removeItem("lotto_signup_info");
+  localStorage.removeItem("lotto_signup_done");
+  return false;
 }
 
 function openSignupModal() {
   if (!signupModal) return;
 
   signupModal.classList.add("is-open");
+  signupModal.removeAttribute("hidden");
+  signupModal.setAttribute("aria-hidden", "false");
   document.body.classList.add("modal-open");
+  document.getElementById("signupError")?.textContent = "";
+  signupModal.scrollIntoView({ block: "center" });
   document.getElementById("signupName")?.focus();
 }
 
@@ -38,6 +58,8 @@ function closeSignupModal() {
 }
 
 function requireSignup(action) {
+  if (typeof action !== "function") return;
+
   if (isSignedUp()) {
     action();
     return;
@@ -247,6 +269,12 @@ document.addEventListener("keydown", (e) => {
     closeSignupModal();
   }
 });
+
+if (new URLSearchParams(window.location.search).get("reset_signup") === "1") {
+  localStorage.removeItem(SIGNUP_KEY);
+  localStorage.removeItem("lotto_signup_info");
+  localStorage.removeItem("lotto_signup_done");
+}
 
 loadPublicEnv();
 
