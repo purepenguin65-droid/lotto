@@ -104,10 +104,10 @@ function startChatRequest(message) {
     return;
   }
 
-  window.requireSignup?.(() => requestChat(message));
+  window.requireSignup?.(() => requestChat(message, birthCheck.birthDate));
 }
 
-async function requestChat(message) {
+async function requestChat(message, birthDate) {
   if (message) {
     appendUserMessage(message);
   } else {
@@ -120,8 +120,10 @@ async function requestChat(message) {
   const loadingEl = chatMessages.lastElementChild;
 
   if (window.location.protocol === "file:") {
+    loadingEl.remove();
     appendErrorMessage("로컬 파일로 열면 AI API를 사용할 수 없습니다. Vercel 배포 주소로 접속해 주세요.");
     chatHistory.pop();
+    setChatLoading(false);
     return;
   }
 
@@ -130,7 +132,7 @@ async function requestChat(message) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        birthDate: birthCheck.birthDate,
+        birthDate,
         today: getTodayForChat(),
         message: message || "",
         history: chatHistory.slice(0, -1),
