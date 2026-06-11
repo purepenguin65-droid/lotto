@@ -133,8 +133,9 @@ async function requestChat(message) {
     loadingEl.remove();
 
     if (!res.ok) {
-      appendErrorMessage(data.error || "AI 응답을 가져오지 못했습니다.");
-      if (message) chatHistory.pop();
+      const detail = data.detail ? ` (${data.detail})` : "";
+      appendErrorMessage((data.error || "AI 응답을 가져오지 못했습니다.") + detail);
+      chatHistory.pop();
       return;
     }
 
