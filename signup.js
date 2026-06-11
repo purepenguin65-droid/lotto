@@ -5,6 +5,7 @@ const signupForm = document.getElementById("signupForm");
 const signupCloseBtn = document.getElementById("signupCloseBtn");
 const signupLaterBtn = document.getElementById("signupLaterBtn");
 const signupBackdrop = document.getElementById("signupBackdrop");
+const signupSubmitBtn = document.getElementById("signupSubmitBtn");
 
 function isSignedUp() {
   return localStorage.getItem(SIGNUP_KEY) === "true";
@@ -42,7 +43,11 @@ function showSignupSuccess(name) {
   }, 4000);
 }
 
-signupForm?.addEventListener("submit", (e) => {
+function setSubmitting(loading) {
+  if (signupSubmitBtn) signupSubmitBtn.disabled = loading;
+}
+
+signupForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const name = document.getElementById("signupName").value.trim();
@@ -65,17 +70,34 @@ signupForm?.addEventListener("submit", (e) => {
     return;
   }
 
-  const signupData = {
-    name,
-    phone,
-    email,
-    joinedAt: new Date().toISOString(),
-  };
-
-  localStorage.setItem(SIGNUP_KEY, "true");
-  localStorage.setItem("lotto_signup_info", JSON.stringify(signupData));
   errorEl.textContent = "";
-  showSignupSuccess(name);
+  setSubmitting(true);
+
+  try {
+    const res = await fetch("/api/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, phone, email }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      errorEl.textContent = data.error || "가입에 실패했습니다.";
+      return;
+    }
+
+    localStorage.setItem(SIGNUP_KEY, "true");
+    localStorage.setItem(
+      "lotto_signup_info",
+      JSON.stringify({ name, phone, email, joinedAt: new Date().toISOString() })
+    );
+    showSignupSuccess(name);
+  } catch {
+    errorEl.textContent = "네트워크 오류가 발생했습니다. Vercel 배포 환경에서 다시 시도해 주세요.";
+  } finally {
+    setSubmitting(false);
+  }
 });
 
 signupCloseBtn?.addEventListener("click", closeSignupModal);
