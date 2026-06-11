@@ -137,6 +137,10 @@ async function requestChat(message) {
     }
 
     appendAssistantMessage(data);
+
+    if (data.numbers?.length === 6 && data.bonus) {
+      setTimeout(() => window.showSignupModal?.(), 800);
+    }
   } catch {
     loadingEl.remove();
     appendErrorMessage("네트워크 오류가 발생했습니다. Vercel 배포 환경에서 다시 시도해 주세요.");

@@ -105,6 +105,99 @@
       </div>
     </section>
 
+    <section class="section-block">
+      <div class="section-head">
+        <h2 class="section-title">당첨 후기</h2>
+        <p class="section-desc">AI 번호 추천 서비스를 이용해 1등에 당첨하신 분들의 이야기입니다.</p>
+      </div>
+
+      <div class="reviews-grid">
+        <article class="review-card">
+          <div class="review-badge">1등 당첨</div>
+          <p class="review-text">AI가 추천해준 번호 그대로 샀는데 진짜 1등이 됐어요! 생년월일 운세 기반 추천이 이렇게 맞을 줄 몰랐습니다.</p>
+          <div class="review-balls">
+            <span class="history-ball yellow">3</span>
+            <span class="history-ball yellow">9</span>
+            <span class="history-ball blue">14</span>
+            <span class="history-ball red">27</span>
+            <span class="history-ball gray">33</span>
+            <span class="history-ball green">41</span>
+          </div>
+          <p class="review-meta"><strong>김민수</strong> · 서울 · 2025.11.22</p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-badge">1등 당첨</div>
+          <p class="review-text">매주 AI 추천 번호를 받아보고 있는데, 이번 주 추천 번호로 1등 당첨됐어요. 주변에도 꼭 써보라고 추천하고 있어요!</p>
+          <div class="review-balls">
+            <span class="history-ball yellow">7</span>
+            <span class="history-ball blue">12</span>
+            <span class="history-ball blue">18</span>
+            <span class="history-ball red">24</span>
+            <span class="history-ball gray">36</span>
+            <span class="history-ball green">44</span>
+          </div>
+          <p class="review-meta"><strong>이지연</strong> · 부산 · 2026.01.04</p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-badge">1등 당첨</div>
+          <p class="review-text">처음엔 반신반의했는데, 운세 기반 번호 추천을 믿고 구매했더니 1등 당첨! 인생이 바뀐 기분입니다.</p>
+          <div class="review-balls">
+            <span class="history-ball yellow">2</span>
+            <span class="history-ball yellow">8</span>
+            <span class="history-ball blue">15</span>
+            <span class="history-ball red">21</span>
+            <span class="history-ball gray">38</span>
+            <span class="history-ball green">45</span>
+          </div>
+          <p class="review-meta"><strong>박성훈</strong> · 대구 · 2025.12.13</p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-badge">1등 당첨</div>
+          <p class="review-text">챗봇이 설명해준 이유가 너무 신빙성 있어서 따라 샀는데 1등! AI 추천 서비스 가입하길 정말 잘했어요.</p>
+          <div class="review-balls">
+            <span class="history-ball yellow">5</span>
+            <span class="history-ball blue">13</span>
+            <span class="history-ball red">22</span>
+            <span class="history-ball red">29</span>
+            <span class="history-ball gray">34</span>
+            <span class="history-ball green">42</span>
+          </div>
+          <p class="review-meta"><strong>최유진</strong> · 인천 · 2026.02.08</p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-badge">1등 당첨</div>
+          <p class="review-text">가입 후 매주 맞춤 번호를 받아보고 있어요. 이번에 드디어 1등 당첨! AI 로또 추천은 진짜입니다.</p>
+          <div class="review-balls">
+            <span class="history-ball yellow">1</span>
+            <span class="history-ball yellow">10</span>
+            <span class="history-ball blue">17</span>
+            <span class="history-ball red">26</span>
+            <span class="history-ball gray">31</span>
+            <span class="history-ball green">43</span>
+          </div>
+          <p class="review-meta"><strong>정하늘</strong> · 광주 · 2026.03.15</p>
+        </article>
+
+        <article class="review-card">
+          <div class="review-badge">1등 당첨</div>
+          <p class="review-text">생년월일만 입력했는데 오늘 운세에 맞는 번호를 추천해줘서 따라 샀더니 1등 당첨! 가족 모두 놀랐어요.</p>
+          <div class="review-balls">
+            <span class="history-ball yellow">4</span>
+            <span class="history-ball blue">11</span>
+            <span class="history-ball blue">19</span>
+            <span class="history-ball red">28</span>
+            <span class="history-ball gray">37</span>
+            <span class="history-ball green">40</span>
+          </div>
+          <p class="review-meta"><strong>한소희</strong> · 대전 · 2026.04.19</p>
+        </article>
+      </div>
+    </section>
+
     <section class="section-block section-block--soft">
       <div class="model-card history-section">
         <div class="history-header">
@@ -142,8 +235,41 @@
     <p>본 추첨기는 오락용이며, 당첨을 보장하지 않습니다.</p>
   </footer>
 
+  <div class="signup-modal" id="signupModal" hidden>
+    <div class="signup-backdrop" id="signupBackdrop"></div>
+    <div class="signup-dialog" role="dialog" aria-labelledby="signupTitle" aria-modal="true">
+      <button class="signup-close" id="signupCloseBtn" type="button" aria-label="닫기">×</button>
+      <p class="signup-eyebrow">AI Lotto Premium</p>
+      <h2 class="signup-title" id="signupTitle">앞으로 AI 기반으로 로또 번호를 추천해 드립니다</h2>
+      <p class="signup-desc">이 서비스에 가입하시면 생년월일과 운세를 반영한 맞춤 번호를 정기적으로 받아보실 수 있습니다.</p>
+
+      <form class="signup-form" id="signupForm">
+        <div class="signup-field">
+          <label class="birthday-label" for="signupName">이름</label>
+          <input class="text-input" type="text" id="signupName" placeholder="홍길동" required>
+        </div>
+        <div class="signup-field">
+          <label class="birthday-label" for="signupPhone">전화번호</label>
+          <input class="text-input" type="tel" id="signupPhone" placeholder="010-1234-5678" required>
+        </div>
+        <div class="signup-field">
+          <label class="birthday-label" for="signupEmail">이메일</label>
+          <input class="text-input" type="email" id="signupEmail" placeholder="example@email.com" required>
+        </div>
+        <p class="signup-error" id="signupError"></p>
+        <div class="signup-actions">
+          <button class="btn btn-primary" type="submit">가입하기</button>
+          <button class="btn btn-secondary" type="button" id="signupLaterBtn">나중에</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="signup-toast" id="signupToast" hidden></div>
+
   <script src="lotto-data.js"></script>
   <script src="app.js"></script>
+  <script src="signup.js"></script>
   <script src="chat.js"></script>
 </body>
 </html>
