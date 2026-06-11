@@ -1,4 +1,4 @@
-const SIGNUP_KEY = "lotto_signup_done";
+const SIGNUP_KEY = "lotto_signup_complete";
 
 const signupModal = document.getElementById("signupModal");
 const signupForm = document.getElementById("signupForm");
@@ -12,14 +12,17 @@ function isSignedUp() {
 }
 
 function openSignupModal() {
+  if (!signupModal) return;
   if (isSignedUp()) return;
-  signupModal.hidden = false;
+
+  signupModal.classList.add("is-open");
   document.body.classList.add("modal-open");
   document.getElementById("signupName")?.focus();
 }
 
 function closeSignupModal() {
-  signupModal.hidden = true;
+  if (!signupModal) return;
+  signupModal.classList.remove("is-open");
   document.body.classList.remove("modal-open");
 }
 
@@ -105,7 +108,7 @@ signupLaterBtn?.addEventListener("click", closeSignupModal);
 signupBackdrop?.addEventListener("click", closeSignupModal);
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !signupModal.hidden) {
+  if (e.key === "Escape" && signupModal?.classList.contains("is-open")) {
     closeSignupModal();
   }
 });

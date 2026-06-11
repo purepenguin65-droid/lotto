@@ -52,6 +52,8 @@ function appendAssistantMessage(data) {
     role: "assistant",
     text: `${data.message}\n추천번호: ${data.numbers.join(", ")} + ${data.bonus}`,
   });
+
+  setTimeout(() => window.showSignupModal?.(), 600);
 }
 
 function appendErrorMessage(text) {
@@ -136,10 +138,11 @@ async function requestChat(message) {
       return;
     }
 
-    appendAssistantMessage(data);
-
-    if (data.numbers?.length === 6 && data.bonus) {
-      setTimeout(() => window.showSignupModal?.(), 800);
+    if (data.numbers?.length === 6 && Number.isInteger(data.bonus)) {
+      appendAssistantMessage(data);
+    } else {
+      appendErrorMessage("추천 번호 형식이 올바르지 않습니다. 다시 시도해 주세요.");
+      chatHistory.pop();
     }
   } catch {
     loadingEl.remove();

@@ -744,14 +744,14 @@ body.modal-open {
   position: fixed;
   inset: 0;
   z-index: 2000;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
   padding: var(--spacing-lg);
 }
 
-.signup-modal[hidden] {
-  display: none;
+.signup-modal.is-open {
+  display: flex;
 }
 
 .signup-backdrop {
