@@ -95,10 +95,16 @@ signupForm?.addEventListener("submit", async (e) => {
       body: JSON.stringify({ name, phone, email }),
     });
 
-    const data = await res.json();
+    let data = {};
+    try {
+      data = await res.json();
+    } catch {
+      data = {};
+    }
 
     if (!res.ok) {
-      errorEl.textContent = data.error || "가입에 실패했습니다.";
+      const detail = data.detail ? ` ${data.detail}` : "";
+      errorEl.textContent = (data.error || "가입에 실패했습니다.") + detail;
       return;
     }
 

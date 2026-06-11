@@ -13,6 +13,26 @@ function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function getSupabaseConfig() {
+  const url = process.env.SUPABASE_URL?.trim().replace(/\/$/, "");
+  const key =
+    process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() ||
+    process.env.SUPABASE_ANON_KEY?.trim();
+
+  return { url, key };
+}
+
+async function parseResponseBody(response) {
+  const text = await response.text();
+  if (!text) return null;
+
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { message: text };
+  }
+}
+
 module.exports = async function handler(req, res) {
   setCors(res);
 
@@ -24,12 +44,12 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  const supabaseUrl = process.env.SUPABASE_URL;
-  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const { url: supabaseUrl, key: supabaseKey } = getSupabaseConfig();
 
   if (!supabaseUrl || !supabaseKey) {
     return res.status(500).json({
       error: "Supabase 환경변수가 설정되지 않았습니다.",
+      detail: "Vercel에 SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY를 설정해 주세요.",
     });
   }
 
@@ -69,15 +89,22 @@ module.exports = async function handler(req, res) {
       }),
     });
 
-    const data = await response.json();
+    const data = await parseResponseBody(response);
 
     if (!response.ok) {
+      const message = data?.message || data?.hint || data?.details || "";
       const isDuplicate = data?.code === "23505";
+      const tableMissing =
+        message.includes("signups") &&
+        (message.includes("does not exist") || message.includes("Could not find"));
+
       return res.status(isDuplicate ? 409 : response.status).json({
         error: isDuplicate
           ? "이미 가입된 전화번호 또는 이메일입니다."
-          : "가입 정보 저장에 실패했습니다.",
-        detail: data?.message,
+          : tableMissing
+            ? "signups 테이블이 없습니다. Supabase에서 schema.sql을 실행해 주세요."
+            : "가입 정보 저장에 실패했습니다.",
+        detail: message,
       });
     }
 
