@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로또 번호 추첨기</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="top-nav" aria-label="주요 메뉴">
+    <span class="nav-brand">LOTTO 6/45</span>
+    <span class="nav-meta">번호 추첨 · 역대 당첨 조회</span>
+  </nav>
+
+  <header class="hero-band">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">Lotto Number Generator</p>
+      <h1>로또 번호 추첨기</h1>
+      <p class="hero-subtitle">1부터 45까지의 숫자 중 6개와 보너스 번호 1개를 무작위로 추첨합니다</p>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="section-block">
+      <div class="section-head">
+        <h2 class="section-title">번호 추첨</h2>
+        <p class="section-desc">실제 추첨기처럼 구슬을 하나씩 뽑아 당첨 번호를 확인하세요.</p>
+      </div>
+
+      <div class="draw-stage" id="drawStage" aria-live="polite">
+        <div class="draw-stage-plate">
+          <div class="machine-area">
+            <div class="machine" id="machine">
+              <div class="machine-cap"></div>
+              <div class="machine-drum" id="machineDrum">
+                <div class="drum-glass"></div>
+                <div class="drum-balls" id="drumBalls"></div>
+              </div>
+              <div class="machine-neck" id="machineNeck">
+                <div class="neck-ball" id="neckBall" hidden></div>
+              </div>
+              <div class="machine-dispenser" id="dispenser">
+                <div class="dispenser-glass"></div>
+                <div class="dispenser-ball" id="dispenserBall" hidden></div>
+              </div>
+            </div>
+            <p class="machine-status" id="machineStatus">추첨기가 준비되었습니다</p>
+          </div>
+
+          <div class="result-board">
+            <p class="result-label">당첨 번호</p>
+            <div class="main-balls">
+              <div class="ball placeholder" data-index="0">?</div>
+              <div class="ball placeholder" data-index="1">?</div>
+              <div class="ball placeholder" data-index="2">?</div>
+              <div class="ball placeholder" data-index="3">?</div>
+              <div class="ball placeholder" data-index="4">?</div>
+              <div class="ball placeholder" data-index="5">?</div>
+            </div>
+            <div class="bonus-section">
+              <span class="bonus-label">보너스</span>
+              <div class="ball ball-bonus placeholder" id="bonusBall" data-index="bonus">?</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flying-ball" id="flyingBall" hidden></div>
+
+      <div class="controls">
+        <button class="btn btn-primary" id="drawBtn" type="button">번호 추첨하기</button>
+        <button class="btn btn-secondary" id="resetBtn" type="button" disabled>초기화</button>
+      </div>
+    </section>
+
+    <section class="section-block section-block--soft">
+      <div class="model-card history-section">
+        <div class="history-header">
+          <h2 class="card-title">추첨 기록</h2>
+          <button class="btn-text" id="clearHistoryBtn" type="button" hidden>기록 삭제</button>
+        </div>
+        <ul class="history-list" id="historyList">
+          <li class="history-empty">아직 추첨 기록이 없습니다</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section-block section-block--dark">
+      <div class="section-head section-head--dark">
+        <h2 class="section-title">역대 1등 당첨번호</h2>
+        <span class="past-range" id="pastRange">불러오는 중...</span>
+      </div>
+
+      <div class="model-card past-section">
+        <div class="past-filters">
+          <input class="past-input" type="number" id="drawSearch" placeholder="회차" min="1" aria-label="회차 검색">
+          <input class="past-input" type="number" id="numberFilter" placeholder="포함 번호" min="1" max="45" aria-label="포함 번호 검색">
+          <button class="btn btn-secondary btn-sm" id="pastSearchBtn" type="button">검색</button>
+          <button class="btn-text" id="pastResetBtn" type="button">전체 보기</button>
+        </div>
+        <ul class="past-list" id="pastList">
+          <li class="history-empty">데이터를 불러오는 중...</li>
+        </ul>
+        <div class="past-pagination" id="pastPagination"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>본 추첨기는 오락용이며, 당첨을 보장하지 않습니다.</p>
+  </footer>
+
+  <script src="lotto-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
