@@ -7,6 +7,13 @@ const signupLaterBtn = document.getElementById("signupLaterBtn");
 const signupBackdrop = document.getElementById("signupBackdrop");
 const signupSubmitBtn = document.getElementById("signupSubmitBtn");
 
+const signedUpModal = document.getElementById("signedUpModal");
+const signedUpBackdrop = document.getElementById("signedUpBackdrop");
+const signedUpCloseBtn = document.getElementById("signedUpCloseBtn");
+const signedUpCancelBtn = document.getElementById("signedUpCancelBtn");
+const signedUpContinueBtn = document.getElementById("signedUpContinueBtn");
+const signedUpDesc = document.getElementById("signedUpDesc");
+
 const chatMessages = document.getElementById("chatMessages");
 const chatInput = document.getElementById("chatInput");
 const chatSendBtn = document.getElementById("chatSendBtn");
@@ -60,19 +67,49 @@ function openSignupModal() {
 function closeSignupModal() {
   if (!signupModal) return;
   signupModal.classList.remove("is-open");
-  document.body.classList.remove("modal-open");
+  if (!signedUpModal?.classList.contains("is-open")) {
+    document.body.classList.remove("modal-open");
+  }
+  pendingAction = null;
+}
+
+function openSignedUpModal() {
+  if (!signedUpModal) return;
+
+  const info = getSavedSignupInfo();
+  const name = info?.name || "회원";
+
+  if (signedUpDesc) {
+    signedUpDesc.textContent = `${name}님, 이미 서비스에 가입되어 있습니다. 바로 AI 번호 추천을 받으시겠습니까?`;
+  }
+
+  signedUpModal.classList.add("is-open");
+  signedUpModal.removeAttribute("hidden");
+  signedUpModal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  signedUpModal.scrollIntoView({ block: "center" });
+  signedUpContinueBtn?.focus();
+}
+
+function closeSignedUpModal() {
+  if (!signedUpModal) return;
+  signedUpModal.classList.remove("is-open");
+  if (!signupModal?.classList.contains("is-open")) {
+    document.body.classList.remove("modal-open");
+  }
   pendingAction = null;
 }
 
 function requireSignup(action) {
   if (typeof action !== "function") return;
 
+  pendingAction = action;
+
   if (isSignedUp()) {
-    action();
+    openSignedUpModal();
     return;
   }
 
-  pendingAction = action;
   openSignupModal();
 }
 
@@ -435,10 +472,21 @@ function initSignup() {
   signupLaterBtn?.addEventListener("click", closeSignupModal);
   signupBackdrop?.addEventListener("click", closeSignupModal);
 
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && signupModal?.classList.contains("is-open")) {
-      closeSignupModal();
+  signedUpCloseBtn?.addEventListener("click", closeSignedUpModal);
+  signedUpCancelBtn?.addEventListener("click", closeSignedUpModal);
+  signedUpBackdrop?.addEventListener("click", closeSignedUpModal);
+  signedUpContinueBtn?.addEventListener("click", () => {
+    const nextAction = pendingAction;
+    closeSignedUpModal();
+    if (nextAction) {
+      setTimeout(nextAction, 300);
     }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (signupModal?.classList.contains("is-open")) closeSignupModal();
+    if (signedUpModal?.classList.contains("is-open")) closeSignedUpModal();
   });
 
   if (new URLSearchParams(window.location.search).get("reset_signup") === "1") {
@@ -450,8 +498,18 @@ function initSignup() {
   loadPublicEnv();
 }
 
+function startRecommendRequest() {
+  const birthCheck = getBirthDateForChat();
+  if (!birthCheck.ok) {
+    appendErrorMessage(birthCheck.message);
+    return;
+  }
+
+  requireSignup(() => requestChat("", birthCheck.birthDate));
+}
+
 function initChat() {
-  chatRecommendBtn?.addEventListener("click", () => startChatRequest(""));
+  chatRecommendBtn?.addEventListener("click", startRecommendRequest);
 
   chatSendBtn?.addEventListener("click", () => {
     const text = chatInput.value.trim();
